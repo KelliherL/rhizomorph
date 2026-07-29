@@ -17,8 +17,8 @@ sudo apt install tmux  # Debian/Ubuntu
 ```
 
 **workmux** lives at
-[github.com/joshuavial/workmux](https://github.com/joshuavial/workmux). Install
-it from there, following that README. Come back when `workmux --version` prints
+[github.com/raine/workmux](https://github.com/raine/workmux). Install it from
+there, following that README. Come back when `workmux --version` prints
 something.
 
 **tmux keys.** Out of the box, tmux gives you `C-b` as a prefix and no pane
