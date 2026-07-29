@@ -5,6 +5,39 @@ Running parallel agents across git worktrees and tmux windows.
 Two skills ship with this repo: driving tmux by hand, and driving `workmux` for
 worktree-per-branch workflows. See below for how they are wired in.
 
+## What you are building
+
+**Anything you want.** There is no prescribed product this time. Pick something
+you would find satisfying to have built by the end of the day.
+
+**This one is solo.** No pair, no shared fork, nobody reviewing your PRs. The
+last two days were about working with another person; this one is about working
+with several agents at once, which is a different skill and needs your full
+attention on the orchestration rather than on a partner.
+
+**Docs first, exactly as in the Next.js challenge.** Follow Part 1 of
+[`nextjs-project`](https://github.com/launchpad-26/nextjs-project): write
+`docs/prd0.md` and then `docs/architecture.md`, in that order, before the agent
+writes any code, and feed both into every prompt afterwards. Add a
+`docs/vision.md` first if blahing at the AI helps you find the idea. What you are
+building shapes how you should build it, so deciding the stack first means
+choosing for an app you have not decided on yet.
+
+Then the part that is new today:
+
+1. **Build a backlog.** Turn `prd0.md` into issues, as you did before.
+2. **Groom it.** This is the step that earns its keep once you are running
+   several agents. Which issues can be worked at the same time without touching
+   the same files? Which ones block others? Make the dependencies explicit and
+   say which files each issue will touch. An ungroomed backlog with three agents
+   on it produces three conflicting branches.
+3. **Get multiple agents working through it.** One worktree per issue, one agent
+   per worktree, running at once. Keep grooming as you go, because the backlog
+   changes shape once work starts landing.
+
+The point of the day is not the app. It is finding out how many agents you can
+actually keep useful at once, and what breaks first when you try.
+
 ## Steps
 
 ### 1. Install the tools and set up your tmux keys
@@ -25,7 +58,7 @@ something.
 navigation worth using. Put this in `~/.tmux.conf`:
 
 ```tmux
-# Prefix on Ctrl-space, because Ctrl-b collides with everything
+# optional JV prefers Ctrl-space
 unbind C-b
 set -g prefix C-space
 bind Space send-prefix
