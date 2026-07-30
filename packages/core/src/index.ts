@@ -8,6 +8,7 @@
 export * from './collector.js'
 export * from './events/index.js'
 export * from './fixtures.js'
+export * from './jsonl.js'
 export * from './reduce.js'
 export * from './selectors/index.js'
 export * from './state.js'
