@@ -1,11 +1,9 @@
-import { z } from 'zod'
+/**
+ * @observatory/core — the event contract and every pure derivation over it.
+ *
+ * Server, collectors and web all import from here; nothing here imports from
+ * them. One event log in, one SessionState and a pile of selectors out.
+ */
 
-export const placeholderSchema = z.object({
-  ready: z.boolean(),
-})
-
-export type Placeholder = z.infer<typeof placeholderSchema>
-
-export function placeholder(): Placeholder {
-  return { ready: true }
-}
+export * from './collector.js'
+export * from './events/index.js'
