@@ -1,0 +1,19 @@
+{
+  "name": "@observatory/server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@observatory/core": "*",
+    "fastify": "5.10.0"
+  },
+  "devDependencies": {
+    "tsx": "4.23.1"
+  }
+}
