@@ -1,0 +1,14 @@
+# Fleet config — The Observatory build day (2026-07-30).
+# Ruling: workers run with skipped permissions in isolated worktrees
+# (throwaway repo, no secrets, non-root user).
+agent: claude --model sonnet --dangerously-skip-permissions
+
+merge_strategy: merge   # keep the DAG visible — the Observatory renders it
+
+post_create:
+  - "[ -f package.json ] && npm install || true"
+
+# Mechanical merge gate: workmux refuses to merge red branches.
+pre_merge:
+  - npm test
+  - npm run typecheck
