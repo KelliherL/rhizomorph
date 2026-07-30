@@ -1,4 +1,4 @@
-import type { EventType, ObservatoryEvent, PayloadOf } from './events/index.js'
+import { type EventType, type ObservatoryEvent, type PayloadOf, createEvent } from './events/index.js'
 
 /**
  * The contract between the poll loop (server) and every collector, so neither
@@ -75,6 +75,31 @@ export interface Collector<Snapshot = unknown> {
   ): Promise<PollResult<Snapshot>> | PollResult<Snapshot>
 }
 
-/** Erased form, for a registry holding collectors with differing snapshots. */
+export interface CollectorContextInit {
+  repoPath: string
+  now: number
+  exec: Exec
+  nextId: () => string
+}
+
+/**
+ * Builds the per-tick context. One implementation of `emit` for every
+ * collector, so nobody hand-rolls an envelope or skips validation.
+ */
+export function createCollectorContext(init: CollectorContextInit): CollectorContext {
+  return {
+    repoPath: init.repoPath,
+    now: init.now,
+    exec: init.exec,
+    nextId: init.nextId,
+    emit: (type, payload) => createEvent(type, payload, { id: init.nextId(), ts: init.now }),
+  }
+}
+
+/**
+ * Erased form, for a registry holding collectors with differing snapshot
+ * types. `any` rather than `unknown` so an implementation with a concrete
+ * snapshot is assignable to it.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyCollector = Collector<any>

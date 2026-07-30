@@ -21,8 +21,7 @@ import { MAX_ERRORS, basename, initialSessionState } from './state.js'
  * that identity is the whole reason replay is free.
  */
 export function reduce(state: SessionState, event: ObservatoryEvent): SessionState {
-  const next = applyEvent(withEnvelope(state, event), event)
-  return next
+  return applyEvent(withEnvelope(state, event), event)
 }
 
 /** Fold a whole log. Handy for replay slices and for tests. */

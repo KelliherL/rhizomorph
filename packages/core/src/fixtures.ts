@@ -1,3 +1,4 @@
+import type { Exec, ExecOptions, ExecResult } from './collector.js'
 import {
   createEvent,
   createIdFactory,
@@ -178,6 +179,71 @@ export function makeEvent<T extends EventType>(
     ts: init.ts ?? FIXTURE_START_TS,
   })
 }
+
+export interface StubExecRoute {
+  /** Substring of `command arg arg…`, or a predicate for anything fussier. */
+  match: string | ((command: string, args: readonly string[]) => boolean)
+  /** Defaults to a clean exit with empty output. */
+  result?: Partial<ExecResult>
+}
+
+export interface StubExecCall {
+  command: string
+  args: readonly string[]
+  options: ExecOptions | undefined
+}
+
+export interface StubExec {
+  (command: string, args: readonly string[], options?: ExecOptions): Promise<ExecResult>
+  /** Every invocation, in order, for asserting what a collector actually ran. */
+  calls: StubExecCall[]
+}
+
+/**
+ * An {@link Exec} backed by canned command output, so collector tests run with
+ * no git, tmux or workmux installed. An unmatched command comes back the way a
+ * missing binary does — which every collector has to survive anyway.
+ */
+export function createStubExec(routes: readonly StubExecRoute[] = []): StubExec {
+  const calls: StubExecCall[] = []
+
+  const exec = async (command: string, args: readonly string[], options?: ExecOptions) => {
+    calls.push({ command, args, options })
+    const line = [command, ...args].join(' ')
+    const route = routes.find((candidate) =>
+      typeof candidate.match === 'string'
+        ? line.includes(candidate.match)
+        : candidate.match(command, args),
+    )
+
+    if (route === undefined) {
+      return {
+        stdout: '',
+        stderr: '',
+        code: 127,
+        failed: true,
+        errorMessage: `no stub for: ${line}`,
+      }
+    }
+
+    const { result = {} } = route
+    const code = result.code === undefined ? 0 : result.code
+    return {
+      stdout: result.stdout ?? '',
+      stderr: result.stderr ?? '',
+      code,
+      failed: result.failed ?? (code !== 0),
+      ...(result.errorMessage === undefined ? {} : { errorMessage: result.errorMessage }),
+    }
+  }
+
+  const stub = exec as StubExec
+  stub.calls = calls
+  return stub
+}
+
+/** Compile-time assurance that {@link StubExec} really is an {@link Exec}. */
+export const _stubExecIsAnExec: Exec = createStubExec()
 
 const WT = (name: string) => `${FIXTURE_REPO_PATH}-wt/${name}`
 
