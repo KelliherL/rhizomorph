@@ -10,5 +10,5 @@ post_create:
 
 # Mechanical merge gate: workmux refuses to merge red branches.
 pre_merge:
-  - npm test
-  - npm run typecheck
+  - cd "$WM_WORKTREE_PATH" && npm test
+  - cd "$WM_WORKTREE_PATH" && npm run typecheck
