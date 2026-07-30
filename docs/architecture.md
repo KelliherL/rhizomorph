@@ -108,3 +108,30 @@ hook.
   less discoverable. (Blessed.)
 - 2026-07-30 — Tailwind 4 for panels: daily fluency, faster worker output,
   one more scaffold dep. (Blessed.)
+
+## Platform — pinned versions (issue #1, 2026-07-30)
+
+| Package | Version |
+| --- | --- |
+| node (engine) | 22 |
+| typescript | 7.0.2 |
+| vitest | 4.1.10 |
+| zod | 4.4.3 |
+| fastify | 5.10.0 |
+| vite | 8.1.5 |
+| @vitejs/plugin-react | 6.0.4 |
+| react | 19.2.8 |
+| react-dom | 19.2.8 |
+| @types/react | 19.2.17 |
+| @types/react-dom | 19.2.3 |
+| tailwindcss | 4.3.3 |
+| @tailwindcss/vite | 4.3.3 |
+| @react-three/fiber | 9.6.1 |
+| @react-three/drei | 10.7.7 |
+| three | 0.185.1 |
+| @types/three | 0.185.1 |
+| jsdom | 30.0.1 |
+| @testing-library/react | 16.3.2 |
+| @testing-library/jest-dom | 7.0.0 |
+| tsx | 4.23.1 |
+| @types/node | 22.20.1 |
