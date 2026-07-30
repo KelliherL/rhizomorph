@@ -1,0 +1,20 @@
+{
+  "name": "observatory",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev:web": "npm run dev --workspace packages/web",
+    "dev:server": "npm run dev --workspace packages/server"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}
