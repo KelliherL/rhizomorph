@@ -52,7 +52,7 @@ describe('reduce — envelope bookkeeping', () => {
 
   it('is pure — the input state is untouched', () => {
     const before = initialSessionState()
-    const snapshot = structuredClone(before)
+    const snapshot = JSON.parse(JSON.stringify(before)) as unknown
     const after = reduce(before, f.worktreeDiscovered())
     expect(before).toEqual(snapshot)
     expect(after).not.toBe(before)
