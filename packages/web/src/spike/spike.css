@@ -1,0 +1,478 @@
+/*
+ * SPIKE B — the sigil organism.
+ *
+ * Type law (ruling 11): sans for labels and copy, monospace with tabular
+ * numerals for every number, id, branch and timestamp; the wordmark is the
+ * only display voice. Colour law (ruling 9): the four ladder hues live in
+ * `palette.ts` and are applied inline, per datum — nothing decorative here is
+ * allowed to reach for one.
+ */
+
+:root {
+  --void: #05060a;
+  --void-raised: #0a0c14;
+  --line: #171b28;
+  --ink: #c8d2e0;
+  --ink-dim: #6f7c90;
+
+  --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.sigil-page {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+  background:
+    radial-gradient(1200px 700px at 38% 42%, #0a1018 0%, transparent 70%),
+    var(--void);
+}
+
+.strip {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* --- attention (ruling 5) --------------------------------------------------- */
+
+.attention {
+  min-height: 46px;
+  padding-block: 7px;
+  flex-wrap: wrap;
+}
+
+.attention-verdict {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.attention-clear .attention-verdict {
+  color: var(--ink);
+}
+
+.attention-evidence {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.attention-items {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.attention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px 3px 7px;
+  background: #0c0f18;
+  border: 1px solid;
+  border-radius: 2px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.attention-item:hover,
+.attention-item.is-selected {
+  background: #131826;
+}
+
+.attention-lane {
+  font-size: 11.5px;
+}
+
+.attention-why {
+  color: var(--ink-dim);
+}
+
+.attention-since {
+  color: var(--ink-dim);
+  font-size: 11px;
+}
+
+/* --- burn (ruling 13) -------------------------------------------------------- */
+
+.burn {
+  min-height: 52px;
+  gap: 30px;
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 78px;
+}
+
+.figure-label {
+  font-size: 9.5px;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.figure-value {
+  font-size: 19px;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.figure-note {
+  font-size: 9.5px;
+  color: var(--ink-dim);
+}
+
+.burn-spacer {
+  flex: 1;
+}
+
+.burn-provenance {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+/* Gap voice (ruling 12): what is missing, why it matters, the command. */
+.gap-voice {
+  font-size: 11px;
+  color: var(--ink-dim);
+  border-left: 2px solid #2a3142;
+  padding-left: 10px;
+}
+
+/* --- main split ---------------------------------------------------------------- */
+
+.sigil-main {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  min-height: 0;
+}
+
+.scene-frame {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--line);
+}
+
+.sigil-scene {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.scene-caption {
+  position: absolute;
+  left: 20px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.wordmark {
+  font-size: 13px;
+  letter-spacing: 0.42em;
+  color: #3d4658;
+}
+
+.scene-repo {
+  font-size: 10.5px;
+  color: #333c4c;
+}
+
+/* --- the organism ------------------------------------------------------------- */
+
+.sigil-bloom {
+  opacity: 0.6;
+}
+
+.limb {
+  cursor: pointer;
+}
+
+.node-label {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  paint-order: stroke;
+  stroke: var(--void);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.sigil-bloom .node-label,
+.sigil-bloom .core-label {
+  display: none;
+}
+
+.core-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  fill: #55617a;
+  pointer-events: none;
+}
+
+/*
+ * The one ambient motion on the page (ruling 10). Low amplitude, slow, and it
+ * belongs to the core alone — everything else is still until an event moves it.
+ */
+.core-breath {
+  transform-origin: 0 0;
+  transform-box: view-box;
+  animation: breathe 5.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    scale: 1;
+    opacity: 0.92;
+  }
+  50% {
+    scale: 1.028;
+    opacity: 1;
+  }
+}
+
+.limb-pulse {
+  animation: pulse-once 900ms ease-out 1 both;
+  pointer-events: none;
+}
+
+@keyframes pulse-once {
+  from {
+    opacity: 0.9;
+    r: 6;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .core-breath,
+  .limb-pulse {
+    animation: none;
+  }
+}
+
+/* --- fleet table (ruling 7) ----------------------------------------------------- */
+
+.fleet {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--void-raised);
+}
+
+.fleet-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 14px 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.fleet-head h2 {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--ink-dim);
+}
+
+.fleet-count {
+  font-size: 10px;
+  color: var(--ink-dim);
+}
+
+.fleet-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  display: block;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.fleet-table thead,
+.fleet-table tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.fleet-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--void-raised);
+  z-index: 1;
+}
+
+.fleet-table th {
+  padding: 5px 6px;
+  font-weight: 400;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4a5468;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+
+.fleet-table th.col-lane {
+  text-align: left;
+}
+
+.col-state {
+  width: 26px;
+  padding-left: 10px !important;
+}
+
+.col-lane {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-num {
+  text-align: right;
+  width: 44px;
+}
+
+.fleet-row td {
+  padding: 3px 6px;
+  border-bottom: 1px solid #0f1320;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.fleet-row {
+  cursor: pointer;
+}
+
+.fleet-row:hover td {
+  background: #121724;
+}
+
+.fleet-row.is-selected td {
+  background: #151b2b;
+}
+
+.fleet-row.is-retired td {
+  opacity: 0.42;
+}
+
+.fleet-row[data-ladder='needs-you'] td,
+.fleet-row[data-ladder='broken'] td {
+  color: var(--ink);
+}
+
+.mini-glyph {
+  display: block;
+  overflow: visible;
+}
+
+.fleet-subrow td {
+  color: #566074;
+  font-size: 10px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.fleet-detail td {
+  color: #566074;
+  font-size: 10px;
+  font-family: var(--sans);
+  white-space: normal;
+  padding-bottom: 6px;
+}
+
+/* --- provenance / source tabs ---------------------------------------------------- */
+
+.provenance {
+  min-height: 34px;
+  border-bottom: none;
+  border-top: 1px solid var(--line);
+  justify-content: space-between;
+}
+
+.source-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.source-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+}
+
+.source-tab.is-active {
+  color: var(--ink);
+  border-color: #2b3346;
+  background: #10141f;
+}
+
+.source-key {
+  color: #3f4759;
+}
+
+.source-tab.is-active .source-key {
+  color: var(--ink-dim);
+}
+
+.source-status,
+.provenance-note {
+  font-size: 10px;
+  color: #3f4759;
+}

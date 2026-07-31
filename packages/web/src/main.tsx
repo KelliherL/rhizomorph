@@ -1,7 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { App } from './App.js'
-import './index.css'
+import { SigilPage } from './spike/SigilPage.js'
+
+// SPIKE B (prd3 ruling 24). Disposable branch: the shell and its panel grid
+// are still in the tree and still tested, but the page this build serves is
+// the sigil organism, so the direction can be judged in a browser.
 
 const container = document.getElementById('root')
 if (!container) {
@@ -10,6 +13,6 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    <App />
+    <SigilPage />
   </StrictMode>,
 )
