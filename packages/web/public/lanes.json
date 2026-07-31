@@ -1,0 +1,20 @@
+{
+  "spike-a-constellation": {
+    "handle": "spike-a-constellation",
+    "fence": ["packages/web/**", "spike-artifacts/**"],
+    "issue": null,
+    "model": "claude-opus-5"
+  },
+  "spike-b-sigil-organism": {
+    "handle": "spike-b-sigil-organism",
+    "fence": ["packages/web/**", "spike-artifacts/**"],
+    "issue": null,
+    "model": "claude-opus-5"
+  },
+  "spike-c-mycelium": {
+    "handle": "spike-c-mycelium",
+    "fence": ["packages/web/**", "spike-artifacts/**"],
+    "issue": null,
+    "model": "claude-opus-5"
+  }
+}

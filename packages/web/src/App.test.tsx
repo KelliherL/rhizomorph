@@ -1,32 +1,15 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import { createEvent, createIdFactory } from '@observatory/core'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { App } from './App.js'
 import type { EventSourceLike } from './hooks/useEventStream.js'
 
-// App renders these behind React.lazy(() => import(...)). Mocking them (below)
-// makes their dynamic import() trivial, but it's still a real import() —
-// React.lazy still suspends for at least one promise-resolution tick before
-// the shell commits. `findByText`/`waitFor` race that tick against a fixed
-// default deadline (1000ms), and under CPU contention (several suites'
-// processes fighting for the same cores) that tick's wall-clock cost is
-// whatever the scheduler feels like, which can occasionally outrun the
-// deadline — the same family of flake already fixed in PanelGrid.test.tsx
-// (#28, #42). Preloading resolves each mocked module's import() *before*
-// mounting (an unbounded await with no deadline of its own), so by the time
-// App's `lazy()` calls the same import() specifier, the module record is
-// already fulfilled and there is no delay left to race. The one remaining
-// tick — React's mandatory suspend-then-resume on first render, now against
-// already-resolved promises — is flushed deterministically with
-// `act(async () => {})` instead of a timed poll, so the assertions that
-// follow are plain synchronous queries with nothing left to race.
-vi.mock('./panels/worktrees/index.js', () => ({ default: () => <h2>Worktrees</h2> }))
-vi.mock('./panels/collisions/index.js', () => ({ default: () => <h2>Collisions</h2> }))
-vi.mock('./panels/ticker/index.js', () => ({ default: () => <div>Commit ticker</div> }))
-vi.mock('./panels/spend/index.js', () => ({ default: () => <h2>Spend ticker</h2> }))
-vi.mock('./panels/ledger/index.js', () => ({ default: () => <h2>Ledger</h2> }))
-vi.mock('./replay/index.js', () => ({ default: () => <div>Replay stub</div> }))
-vi.mock('./scene/index.js', () => ({ default: () => <div>Scene stub</div> }))
+/**
+ * SPIKE A — the page-level smoke test. `App` renders the spike page on this
+ * branch (the panel-grid shell it replaces still has its own suites); this
+ * covers the wiring the screenshots cannot: the live stream folding into the
+ * attention strip, and the fixture keys switching source.
+ */
 
 afterEach(cleanup)
 
@@ -34,33 +17,29 @@ class FakeEventSource implements EventSourceLike {
   onopen: ((event: Event) => void) | null = null
   onerror: ((event: Event) => void) | null = null
   onmessage: ((event: MessageEvent<string>) => void) | null = null
+  private readonly named = new Map<string, (event: MessageEvent<string>) => void>()
+
+  addEventListener(type: string, listener: (event: MessageEvent<string>) => void) {
+    this.named.set(type, listener)
+  }
+
+  removeEventListener(type: string) {
+    this.named.delete(type)
+  }
 
   open() {
     this.onopen?.(new Event('open'))
   }
 
-  emit(data: unknown) {
-    this.onmessage?.({ data: JSON.stringify(data) } as MessageEvent<string>)
+  emit(event: { type: string }) {
+    const message = { data: JSON.stringify(event) } as MessageEvent<string>
+    this.named.get(event.type)?.(message) ?? this.onmessage?.(message)
   }
 
   close() {}
 }
 
-/**
- * jsdom has no `EventSource` global, so every render needs a mock source
- * injected. Also preloads every mocked lazy module and flushes the one
- * remaining suspend-then-resume tick before returning — see the top-of-file
- * comment — so callers can assert with plain synchronous queries.
- */
-async function renderApp() {
-  await import('./panels/worktrees/index.js')
-  await import('./panels/collisions/index.js')
-  await import('./panels/ticker/index.js')
-  await import('./panels/spend/index.js')
-  await import('./panels/ledger/index.js')
-  await import('./replay/index.js')
-  await import('./scene/index.js')
-
+function renderApp() {
   let source: FakeEventSource | undefined
   const utils = render(
     <App
@@ -71,60 +50,73 @@ async function renderApp() {
       }}
     />,
   )
-  await act(async () => {})
   return { ...utils, source: () => source }
 }
 
 const nextId = createIdFactory('evt')
 
-function fixtureEvents() {
+function liveEvents() {
+  const now = Date.now()
   return [
     createEvent(
       'session.started',
       { sessionId: 's1', repoPath: '/repo', repoName: 'observatory', mainBranch: 'main' },
-      { id: nextId(), ts: 1 },
+      { id: nextId(), ts: now - 1000 },
     ),
     createEvent(
       'worktree.discovered',
       { path: '/repo', branch: 'main', head: 'sha-0', isMain: true },
-      { id: nextId(), ts: 2 },
+      { id: nextId(), ts: now - 900 },
+    ),
+    createEvent(
+      'worktree.discovered',
+      { path: '/repo-wt/9-thing', branch: '9-thing', head: 'sha-1', isMain: false },
+      { id: nextId(), ts: now - 800 },
+    ),
+    createEvent(
+      'agent.status',
+      {
+        handle: '9-thing',
+        status: 'waiting',
+        worktreePath: '/repo-wt/9-thing',
+        branch: '9-thing',
+      },
+      { id: nextId(), ts: now - 700 },
     ),
   ]
 }
 
-describe('App', () => {
-  it('renders the instrument shell — scene slot, panel grid, replay bar', async () => {
-    await renderApp()
+describe('the spike page', () => {
+  it('renders the four surfaces and starts with no live data', () => {
+    renderApp()
 
-    expect(screen.getByText('THE OBSERVATORY')).toBeInTheDocument()
-    expect(screen.getByText('connecting…')).toBeInTheDocument()
-    expect(screen.getByText('Worktrees')).toBeInTheDocument()
-    expect(screen.getByText('Collisions')).toBeInTheDocument()
-    expect(screen.getByText('Commit ticker')).toBeInTheDocument()
-    expect(screen.getByText('Spend ticker')).toBeInTheDocument()
-    expect(screen.getByText('Ledger')).toBeInTheDocument()
+    expect(screen.getByText('the fleet')).toBeInTheDocument()
+    expect(screen.getByText('lanes')).toBeInTheDocument()
+    expect(screen.getByText('output tok')).toBeInTheDocument()
+    expect(screen.getByText(/no live stream/i)).toBeInTheDocument()
   })
 
-  it('surfaces connection state and folds fixture events from a mock stream', async () => {
-    const { source } = await renderApp()
+  it('folds the live stream and raises the lane that needs the operator', () => {
+    const { source } = renderApp()
 
     act(() => source()?.open())
-    await waitFor(() => expect(screen.getByText('live')).toBeInTheDocument())
+    for (const event of liveEvents()) act(() => source()?.emit(event))
 
-    for (const event of fixtureEvents()) {
-      act(() => source()?.emit(event))
-    }
-
-    // Stub panels don't read stream state yet — this proves the hook folded
-    // the events without the shell crashing or losing the connection badge.
-    await waitFor(() => expect(screen.getByText('live')).toBeInTheDocument())
+    expect(screen.getByText('1 NEEDS YOU')).toBeInTheDocument()
+    // The lane is named in the strip, the table and the scene — all three read
+    // the one model, which is the point of asserting on all of them at once.
+    expect(screen.getAllByText('9-thing').length).toBeGreaterThanOrEqual(2)
+    expect(screen.getAllByText('WAITING').length).toBeGreaterThanOrEqual(2)
   })
 
-  it('can collapse and re-expand the scene slot', async () => {
-    await renderApp()
-    const toggle = screen.getByRole('button', { name: /collapse scene/i })
+  it('switches to the staged fixture on key 3', () => {
+    renderApp()
 
-    act(() => toggle.click())
-    expect(await screen.findByRole('button', { name: /expand scene/i })).toBeInTheDocument()
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: '3' }))
+    })
+
+    expect(screen.getByText(/staged pathologies/)).toBeInTheDocument()
+    expect(screen.getByText('4 NEED YOU')).toBeInTheDocument()
   })
 })

@@ -1,7 +1,14 @@
-import { ModeProvider } from './app/ModeContext.js'
-import { StreamProvider } from './app/StreamContext.js'
-import { Shell } from './app/Shell.js'
+import { SpikePage } from './spike/SpikePage.js'
 import type { EventSourceFactory } from './hooks/useEventStream.js'
+
+/**
+ * SPIKE A — CONSTELLATION REFINED (prd3, disposable branch).
+ *
+ * The shell/panel-grid app is bypassed on this branch: the spike is one page,
+ * reviewed side by side with spikes B and C. Everything it renders comes from
+ * the same validated event stream, through the same `@observatory/core`
+ * selectors, as the app it is proposing to replace.
+ */
 
 export interface AppProps {
   streamUrl?: string
@@ -10,11 +17,5 @@ export interface AppProps {
 }
 
 export function App({ streamUrl = '/api/stream', createSource }: AppProps = {}) {
-  return (
-    <ModeProvider>
-      <StreamProvider url={streamUrl} createSource={createSource}>
-        <Shell />
-      </StreamProvider>
-    </ModeProvider>
-  )
+  return <SpikePage streamUrl={streamUrl} createSource={createSource} />
 }

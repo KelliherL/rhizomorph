@@ -1,0 +1,529 @@
+/*
+ * SPIKE A — CONSTELLATION REFINED
+ *
+ * One stylesheet, one accent family, four status hues and nothing else.
+ * Every value here is a decision, not a default:
+ *
+ *   surfaces  — five steps of near-black, 3–5% apart, so a panel edge reads
+ *               without a border doing the work.
+ *   ink       — a six-step NEUTRAL ramp. This is where contrast is spent:
+ *               data gets --ink-hi, labels get --ink-lo. Colour is never
+ *               used to make something merely "important".
+ *   ladder    — calm / notice / needs-you / broken. These four hues are
+ *               reserved. Nothing decorative may touch them.
+ *   space     — a 4px grid. --sp-3 (12px) is the panel gutter, --sp-2 (8px)
+ *               is the in-panel gutter, --sp-1 (4px) is the cell gutter.
+ *               Whitespace lives BETWEEN panels, never inside a table row.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── surfaces ─────────────────────────────────────────────────────── */
+  --sf-void: #05060a;
+  --sf-page: #07080e;
+  --sf-panel: #0a0c13;
+  --sf-raise: #0f121c;
+  --sf-hover: #141827;
+  --rule: #161a26;
+  --rule-hi: #232a3c;
+
+  /* ── the neutral data ramp ────────────────────────────────────────── */
+  --ink-hi: #eef1f8;
+  --ink: #c2cadb;
+  --ink-mid: #8c96ad;
+  --ink-lo: #5b6479;
+  --ink-dim: #3c4357;
+  --ink-ghost: #262c3b;
+
+  /* ── the ladder. exclusive hues. ──────────────────────────────────── */
+  --calm: #7b8699;
+  --notice: #45dcf2;
+  --needs: #ffb347;
+  --broken: #ff3d6a;
+
+  /* dimmed ladder — for fills and washes, never for text */
+  --calm-wash: #7b869914;
+  --notice-wash: #45dcf21f;
+  --needs-wash: #ffb3471f;
+  --broken-wash: #ff3d6a1f;
+
+  /* ── type ─────────────────────────────────────────────────────────── */
+  --mono: 'JetBrains Mono', 'Ubuntu Sans Mono', 'DejaVu Sans Mono', ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+  --sans: 'Inter', 'Ubuntu Sans', Ubuntu, system-ui, -apple-system, sans-serif;
+
+  /* ── space: 4px grid ──────────────────────────────────────────────── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--sf-void);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Every number, id, branch and timestamp. Law 11. */
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  letter-spacing: -0.01em;
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-lo);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   page frame
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.pg {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  background: var(--sf-void);
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+}
+
+.pg-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.42fr) minmax(600px, 1fr);
+  gap: var(--sp-2);
+  min-height: 0;
+}
+
+.panel {
+  background: var(--sf-panel);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-hd {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: 7px var(--sp-3) 6px;
+  border-bottom: 1px solid var(--rule);
+  flex: none;
+}
+
+.panel-hd .spacer {
+  flex: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   attention strip + burn strip (one bar — ruling 13)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  background: var(--sf-panel);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  flex: none;
+}
+
+.att {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-3);
+  min-height: 46px;
+  min-width: 0;
+  position: relative;
+}
+
+/* The rung's one hue enters here and nowhere else on the bar. */
+.att::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--rung);
+  border-radius: 3px 0 0 3px;
+}
+
+.att-verdict {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: none;
+}
+
+.att-word {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--rung);
+  line-height: 1;
+}
+
+.att-evidence {
+  color: var(--ink-lo);
+  font-size: 11px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.att-items {
+  display: flex;
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.att-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 3px 5px;
+  border: 1px solid var(--chip-hue);
+  border-radius: 2px;
+  background: var(--sf-raise);
+  color: var(--ink);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.att-chip:hover {
+  background: var(--sf-hover);
+}
+
+.att-chip .why {
+  color: var(--chip-hue);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.att-chip .dur {
+  color: var(--ink-lo);
+}
+
+/* one pulse on arrival, then steady — law 10 */
+@keyframes rung-pulse {
+  0% {
+    box-shadow: inset 0 0 0 0 transparent;
+  }
+  22% {
+    box-shadow: inset 0 0 34px -8px var(--rung);
+  }
+  100% {
+    box-shadow: inset 0 0 0 0 transparent;
+  }
+}
+
+.att[data-pulse='on'] {
+  animation: rung-pulse 900ms ease-out 1;
+}
+
+/* ── burn strip: four numbers, no chrome ──────────────────────────────── */
+
+.burn {
+  display: flex;
+  align-items: stretch;
+  border-left: 1px solid var(--rule);
+}
+
+.burn-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 var(--sp-4);
+  border-left: 1px solid var(--rule);
+  min-width: 104px;
+}
+
+.burn-cell:first-child {
+  border-left: none;
+}
+
+.burn-v {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink-hi);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.burn-v.muted {
+  color: var(--ink-dim);
+}
+
+.burn-u {
+  font-size: 11px;
+  color: var(--ink-lo);
+  font-family: var(--mono);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   fleet table
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.fleet-scroll {
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+}
+
+table.fleet {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+}
+
+table.fleet thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--sf-panel);
+  border-bottom: 1px solid var(--rule-hi);
+  padding: 5px 6px 4px;
+  text-align: right;
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+table.fleet thead th.l {
+  text-align: left;
+}
+
+table.fleet tbody td {
+  padding: 0 6px;
+  height: 21px;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--ink-mid);
+  border-bottom: 1px solid #10131c;
+}
+
+table.fleet tbody td.l {
+  text-align: left;
+}
+
+table.fleet tbody tr:hover td {
+  background: var(--sf-raise);
+}
+
+/* the row's rung, as a 2px left edge — one hue, no row-wide tint */
+table.fleet tbody tr td:first-child {
+  box-shadow: inset 2px 0 0 var(--rung);
+  padding-left: 9px;
+}
+
+td.lane {
+  color: var(--ink-hi);
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+td.state {
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--rung);
+  text-align: left;
+}
+
+td.out {
+  color: var(--ink-hi);
+}
+
+td.zero {
+  color: var(--ink-ghost);
+}
+
+/* a lane's relative work size, printed under the number as a hairline */
+.outbar {
+  display: inline-block;
+  height: 3px;
+  background: var(--ink-dim);
+  vertical-align: middle;
+  border-radius: 1px;
+}
+
+tr[data-rung='needs'] .outbar,
+tr[data-rung='broken'] .outbar {
+  background: var(--rung);
+}
+
+.gsig {
+  display: inline-block;
+  vertical-align: -2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   scene
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.scene {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background:
+    radial-gradient(ellipse 62% 62% at 50% 48%, #0c1120 0%, var(--sf-void) 72%);
+  overflow: hidden;
+}
+
+.scene svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scene-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 5px var(--sp-3);
+  border-top: 1px solid var(--rule);
+  color: var(--ink-dim);
+  font-size: 10px;
+  font-family: var(--mono);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   footer / provenance / gap voice
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 5px var(--sp-3);
+  background: var(--sf-panel);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  flex: none;
+  min-height: 26px;
+}
+
+.foot .sep {
+  color: var(--ink-ghost);
+}
+
+.gap {
+  color: var(--ink-lo);
+}
+
+.gap b {
+  color: var(--needs);
+  font-weight: 600;
+  font-family: var(--sans);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+
+.gap code {
+  font-family: var(--mono);
+  color: var(--ink-mid);
+  background: var(--sf-raise);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+/* fixture switch */
+.fx {
+  display: flex;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fx button {
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: none;
+  background: var(--sf-panel);
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+
+.fx button[data-on='1'] {
+  background: var(--sf-hover);
+  color: var(--notice);
+}
+
+.fx kbd {
+  font-family: var(--mono);
+  color: var(--ink-ghost);
+  margin-right: 5px;
+  font-size: 9px;
+}
+
+.wordmark {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--notice);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
