@@ -3,7 +3,7 @@
 %12	obs	1	wm-2-core	/home/lachlan/worktrees-challenge__worktrees/2-core	bash	LachlanPC
 %13	obs	2	wm-3-git-collector	/home/lachlan/worktrees-challenge__worktrees/3-git-collector	claude	⠐ Implement Git collector with shell commands and parsers
 %14	obs	2	wm-3-git-collector	/home/lachlan/worktrees-challenge__worktrees/3-git-collector	bash	LachlanPC
-%15	obs	3	wm-4-tmux-collector	/home/lachlan/worktrees-challenge__worktrees/4-tmux-collector	claude	⠐ Implement tmux collector for The Observatory
+%15	obs	3	wm-4-tmux-collector	/home/lachlan/worktrees-challenge__worktrees/4-tmux-collector	claude	⠐ Implement tmux collector for The Rhizomorph
 %16	obs	3	wm-4-tmux-collector	/home/lachlan/worktrees-challenge__worktrees/4-tmux-collector	bash	LachlanPC
 %17	obs	4	wm-5-workmux-collector	/home/lachlan/worktrees-challenge__worktrees/5-workmux-collector	claude	⠂ Implement workmux collector with status parsing
 %18	obs	4	wm-5-workmux-collector	/home/lachlan/worktrees-challenge__worktrees/5-workmux-collector	bash	LachlanPC
