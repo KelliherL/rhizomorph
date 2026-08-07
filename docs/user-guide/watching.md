@@ -92,12 +92,12 @@ something is broken.
 When a fact isn't available, the UI says so in words instead of guessing or
 showing a bare zero (law 12). Exact strings you may see:
 
-- `NO COST FEED (OTel) — dollars unavailable — run: eval "$(rhizomorph env <lane>)"`
+- `NO COST FEED (OTel) — dollars unavailable — run: eval "$(npm start --silent -- env <lane>)"`
 - `NO LANE MANIFEST (.swarm/lanes.json) — off-fence detection unavailable — run: dispatch.sh (writes the fence manifest)`
 - `NO FENCE FOR N/M LANES — those lanes cannot be judged off-fence`
 - `UNATTRIBUTED SPEND (N lanes) — burn has no declared owner`
 - `CONDUCTOR NOT INSTRUMENTED — overhead ratio unknowable` (burn strip) / `— orchestration overhead unknowable` (fleet-level gap)
-- `<COLLECTOR> COLLECTOR DISABLED — <reason> — run: rhizomorph doctor`
+- `<COLLECTOR> COLLECTOR DISABLED — <reason> — run: npm start --silent -- doctor`
 - `NO TRACE TELEMETRY — no trace telemetry from this lane — see docs/telemetry.md.` (per-lane, in the drawer's TRACE tab)
 
 Each one names what's missing, why, and the exact command that fixes it —

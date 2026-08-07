@@ -12,8 +12,8 @@ different," because most of what's on screen is deliberately allowed to
 evolve without a major bump:
 
 - **Breaking (major):** the CLI's public surface — its subcommands, flags,
-  and their meaning (`rhizomorph [path] [options]`, `rhizomorph doctor`,
-  `rhizomorph env`) — and the shape of `.swarm/lanes.json`, the one file
+  and their meaning (`npm start --silent -- [path] [options]`, `npm start --silent -- doctor`,
+  `npm start --silent -- env`) — and the shape of `.swarm/lanes.json`, the one file
   another tool (a dispatcher, a conductor) is expected to write and this
   one is expected to read. Removing a flag, changing a flag's default in a
   way that changes behavior, renaming an existing field in the lanes
@@ -43,10 +43,10 @@ first; full write-ups are in the numbered `docs/prd*.md` files and
   the agent CLI's own session transcript alone — no tmux, hooks, or
   cooperation from the agent required. Every collector now declares which
   of six signals it can speak to, folded into a named "enrichment rung"
-  (L0 zero-cooperation through L4 tmux/workmux) that `rhizomorph doctor`
+  (L0 zero-cooperation through L4 tmux/workmux) that `npm start --silent -- doctor`
   and `GET /api/meta` report per lane.
 - **Sessions are a thing you can hold (prd16).** An explicit operator act —
-  `rhizomorph rotate`, or the dashboard's "end session · start fresh"
+  `npm start --silent -- rotate`, or the dashboard's "end session · start fresh"
   button — closes the current recording and opens the next one; a
   pid+heartbeat lock stops two instances from racing onto the same session
   log; `--resume-window <ms>` makes the resume boundary configurable and
@@ -77,10 +77,10 @@ first; full write-ups are in the numbered `docs/prd*.md` files and
 - **Provenance and the portable record (prd11).** File-level provenance
   (transcript moment → tool call → file touched → landing commit); a
   portable, hash-chain-integrity-checked session record
-  (`rhizomorph export-record` / `rhizomorph replay <record>`) — see
+  (`npm start --silent -- export-record` / `npm start --silent -- replay <record>`) — see
   [`docs/record-format.md`](docs/record-format.md).
 - **The laboratory (prd12).** A second, explicitly-invoked hand —
-  `rhizomorph lab checkpoint|fork|compare` — for forking a lane's live
+  `npm start --silent -- lab checkpoint|fork|compare` — for forking a lane's live
   workspace and conversation into its own worktree to try something risky,
   under its own write-scope namespace law, entirely separate from the
   read-only observer.
@@ -101,12 +101,14 @@ first; full write-ups are in the numbered `docs/prd*.md` files and
 
 ## [0.1.0] - 2026-08-03
 
-First published release. What the tool actually is, at this point:
+First repository release. The package is not published to npm yet; from a
+fresh clone, run the commands through `npm start --silent --` as documented
+in the README. What the tool actually is, at this point:
 
 ### Added
 
 - A live dashboard for a git-worktree agent swarm: point it at a repo
-  (`npx rhizomorph <path>`) and it discovers worktrees and branches (git),
+  (`npm start --silent -- <path>`) and it discovers worktrees and branches (git),
   agent panes (tmux), and [workmux](https://github.com/raine/workmux) state
   if present — each source optional, each degrading gracefully — and
   reflects reality within a couple of seconds via polling.
@@ -122,11 +124,11 @@ First published release. What the tool actually is, at this point:
 - **The lane drawer**, opened per-lane, showing the agent's own
   conversation — the actual Claude Code session transcript for that lane —
   alongside its cost and timing.
-- **`rhizomorph doctor`**, a read-only preflight that checks Node version,
+- **`npm start --silent -- doctor`**, a read-only preflight that checks Node version,
   target path, web build, port availability, session logs, tmux/workmux,
   telemetry env, and the lane manifest — one `ok`/`warn`/`FAIL` line per
   check, each with its remedy.
-- **`rhizomorph env <lane>`**, printing the exact environment block a lane
+- **`npm start --silent -- env <lane>`**, printing the exact environment block a lane
   needs to export OpenTelemetry cost/token telemetry to this instance's
   local OTLP receiver.
 - Read-only and localhost-only throughout: no writes to the watched repo,

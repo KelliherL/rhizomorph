@@ -42,6 +42,7 @@ describe('formatDollarsOrGap / isDollarsGap', () => {
   it('speaks the gap voice, never $0.00, when no cost event has ever arrived', () => {
     const burn = { ...BASE_BURN, costUsd: 0, costIsAuthoritative: null, costEventCount: 0 }
     expect(formatDollarsOrGap(burn)).toBe(NO_COST_FEED_GAP)
+    expect(NO_COST_FEED_GAP).toContain('npm start --silent -- env')
     expect(isDollarsGap(burn)).toBe(true)
   })
 

@@ -1,7 +1,7 @@
 # The lab
 
 The lab is the instrument's separate, opt-in second hand — reachable only
-from your own command line (`rhizomorph lab ...`), never from a server
+from your own command line (`npm start --silent -- lab ...`), never from a server
 route, a background poll, or (today) a UI button. Everything in
 [watching.md](watching.md) and [replay.md](replay.md) runs the moment the
 server starts; the lab does not run unless you type the command.
@@ -25,7 +25,7 @@ staged, and untracked files folded into one commit via a temp-index recipe,
 **working tree byte-for-byte untouched**:
 
 ```sh
-rhizomorph lab checkpoint <lane> [--path <dir>] [--captured-by dispatch|gate|operator]
+npm start --silent -- lab checkpoint <lane> [--path <dir>] [--captured-by dispatch|gate|operator]
 ```
 
 Prints, e.g.:
@@ -37,7 +37,7 @@ checkpoint <checkpointId> captured for lane "<lane>" — refs/rhizomorph/checkpo
 ## Forking arms
 
 ```sh
-rhizomorph lab fork <lane> [--at <checkpointId>] [--model <m>] [--prompt-file <f>] [--arms <n>] [--path <dir>] [--launch]
+npm start --silent -- lab fork <lane> [--at <checkpointId>] [--model <m>] [--prompt-file <f>] [--arms <n>] [--path <dir>] [--launch]
 ```
 
 Restores `--arms` (default **3** — prd12 ruling 4's floor for a real
@@ -75,7 +75,7 @@ for comparing them once they have.
 ## Comparing arms
 
 ```sh
-rhizomorph lab compare <fork-id> [--verify <cmd>] [--no-verify] [--path <dir>]
+npm start --silent -- lab compare <fork-id> [--verify <cmd>] [--no-verify] [--path <dir>]
 ```
 
 Prints a table — `arm`, `lane`, `treatment`, `verified`, `cost`, `duration`,
@@ -110,10 +110,10 @@ Its own header names the constitutional limit:
 
 Empty states are honest, not blank panels:
 
-> "there are no checkpoints yet — capture one with `rhizomorph lab
+> "there are no checkpoints yet — capture one with `npm start --silent -- lab
 > checkpoint <lane>`"
 >
-> "there are no experiments yet — fork a checkpoint with `rhizomorph lab
+> "there are no experiments yet — fork a checkpoint with `npm start --silent -- lab
 > fork <lane>`"
 
 For each experiment it shows, it computes (never asks you to declare) which

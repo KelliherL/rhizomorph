@@ -111,7 +111,7 @@ describe('BurnStrip', () => {
     const { container } = renderWith({ costUsd: 0, costIsAuthoritative: null, costEventCount: 0 })
 
     expect(screen.getByTestId('burn-dollars').textContent).toBe(
-      'NO COST FEED (OTel) — dollars unavailable — run: eval "$(rhizomorph env <lane>)"',
+      'NO COST FEED (OTel) — dollars unavailable — run: eval "$(npm start --silent -- env <lane>)"',
     )
     expect(container.textContent).not.toContain('$0.00')
   })

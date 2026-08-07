@@ -12,7 +12,7 @@ an OTLP/HTTP JSON exporter pointed at this server, and an
 the right row in the spend ticker. Get the exact block for any lane with:
 
 ```sh
-rhizomorph env <lane> [--role worker|conductor|auxiliary] [--port <n>] [--shell sh|powershell|cmd]
+npm start --silent -- env <lane> [--role worker|conductor|auxiliary] [--port <n>] [--shell sh|powershell|cmd]
 ```
 
 `--port` defaults to 4321 (the Rhizomorph's own default); pass whatever
@@ -23,7 +23,7 @@ and picks the assignment syntax the block is printed in — `sh`'s
 shell. The `sh` output is `export`-ready:
 
 ```sh
-eval "$(rhizomorph env test-lane)"
+eval "$(npm start --silent -- env test-lane)"
 claude -p "..."
 ```
 
@@ -56,7 +56,7 @@ whichever shell the conductor is about to run `claude` in.
 ### sh / bash / zsh (Linux, macOS, WSL)
 
 ```sh
-eval "$(rhizomorph env conductor --role conductor)"
+eval "$(npm start --silent -- env conductor --role conductor)"
 claude
 ```
 
@@ -69,11 +69,11 @@ command in the current session, which is what actually sets the vars for the
 `claude` launched right after:
 
 ```powershell
-node packages/server/bin/rhizomorph.mjs env conductor --role conductor --shell powershell | Invoke-Expression
+npm start --silent -- env conductor --role conductor --shell powershell | Invoke-Expression
 claude
 ```
 
-(Same command, `rhizomorph env conductor --role conductor --shell powershell | iex`, if `rhizomorph` is on PATH.)
+(The same command works when the repository's npm start script is used from a fresh clone.)
 
 ### cmd.exe
 
@@ -81,21 +81,21 @@ claude
 block once and paste its lines by hand — there's no one-liner:
 
 ```bat
-node packages/server\bin\rhizomorph.mjs env conductor --role conductor --shell cmd
+npm start --silent -- env conductor --role conductor --shell cmd
 :: paste the printed "set NAME=value" lines here, then:
 claude
 ```
 
 ### If the server isn't running yet: degrade loudly, don't block the launch
 
-`rhizomorph env` reads the *live* instance id off a running Rhizomorph's
+`npm start --silent -- env` reads the *live* instance id off a running Rhizomorph's
 `/api/meta` (#60) — there is no static block to fall back to, because a
 per-server-session id can't be guessed. If nothing answers on `--port`, the
 command fails loudly instead of printing something the receiver would refuse:
 
 ```
 cannot read this Rhizomorph's instance id on port 4321: ...
-Start the server first (`npm start -- --port 4321`) — `rhizomorph env` reads the id from its /api/meta, ...
+Start the server first (`npm start -- --port 4321`) — `npm start --silent -- env` reads the id from its /api/meta, ...
 ```
 
 That is the correct failure — **say so, then launch uninstrumented anyway**
@@ -155,7 +155,7 @@ Rhizomorph wouldn't otherwise discover — a different filesystem entirely
 talking to a WSL-side Rhizomorph). Point the server at it with (repeatable):
 
 ```sh
-rhizomorph --extra-sessions /mnt/c/Users/<u>/.claude/projects/<slug>:conductor
+npm start --silent -- --extra-sessions /mnt/c/Users/<u>/.claude/projects/<slug>:conductor
 ```
 
 The optional `:conductor` suffix names the lane this session dir shows up as
@@ -210,7 +210,7 @@ still `absent` at L0 is `cost`, dollars specifically. So a lane can read
 tokens honestly with no setup at all; what the rest of this document is
 for is the one thing the transcript alone cannot give you: authoritative or
 estimated *dollars*, which is what climbing from L0 to L1 buys.
-`rhizomorph doctor` and `GET /api/meta` both say the rung a lane is
+`npm start --silent -- doctor` and `GET /api/meta` both say the rung a lane is
 actually sitting at and what climbing it requires, so "is this lane
 instrumented" always has a precise, checkable answer rather than a yes/no
 guess.
@@ -398,7 +398,7 @@ export OTEL_TRACES_EXPORT_INTERVAL=1000         # default 5000
 
 (`OTEL_EXPORTER_OTLP_PROTOCOL=http/json` is already in the block above; traces
 POST to the same base endpoint's `/v1/traces`.) These lines are additive to
-what `rhizomorph env` already renders
+what `npm start --silent -- env` already renders
 (`packages/server/src/cli/telemetry-env.ts`); wiring them into that renderer
 automatically, plus a `doctor` check for trace reachability and
 fixture-vs-CLI drift, is issue #126, this wave's sibling lane — add them by
