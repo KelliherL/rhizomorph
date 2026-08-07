@@ -47,7 +47,7 @@ flags, forward them the same way: `npm start -- <path-to-repo> --port 5000`.
 | `--poll-interval <ms>` | `2000`, minimum `250` | Collector poll cadence in ms |
 | `--extra-sessions <path>[:<lane>]` | — | Foreign Claude session-log dir to tail as a conductor (repeatable). `<path>` is the dir of `*.jsonl` itself; `<lane>` defaults to `conductor`, `conductor-2`, … |
 | `--fresh` | — | Start a new session instead of resuming the most recent one for this repo (default: resume if its newest event is under 4h old) |
-| `--resume-window <ms>` | 4h | Override the resume boundary above. `--resume-window 0` behaves exactly like `--fresh`. The boot line and `rhizomorph doctor` both say which way this decided and why |
+| `--resume-window <ms>` | 4h | Override the resume boundary above. `--resume-window 0` behaves exactly like `--fresh`. The boot line and `npm start --silent -- doctor` both say which way this decided and why |
 | `--backfill` | — | Read session logs from the beginning instead of end-of-file — ingest history on purpose; expect a large first tick |
 | `--help`, `-h` | — | Show usage and exit |
 
@@ -161,7 +161,7 @@ Every path this hand can write to is built from one function,
 constructor for a session, label, snapshot or lock path to have drifted
 from it.
 
-**Ending a session on purpose:** `rhizomorph rotate`, or the dashboard's own
+**Ending a session on purpose:** `npm start --silent -- rotate`, or the dashboard's own
 "end session · start fresh" button, asks the *running* instrument to close
 its current log and open the next one — an explicit human invocation, never
 something a background process performs on its own. On close, each lane's
@@ -190,7 +190,7 @@ not understood (...)"`) rather than pretending nothing happened.
 `watching <repo> — N worktrees, M branches · recording to <path>` — so you
 never have to go looking for it.
 
-**Finding, labelling, managing and replaying a recording:** `rhizomorph
+**Finding, labelling, managing and replaying a recording:** `npm start --silent --
 sessions [path]` lists every session recorded for a repo — newest first,
 each with a title *derived from its own events* (`2026-08-04 · 6 lanes · 5
 landed · #144 #148 #152`, or `2026-08-04 · no activity recorded` for an
@@ -201,20 +201,20 @@ never a second live overview: it renders only what was recorded, never the
 live fleet, a law its own source-grep test
 ([`packages/web/src/recordings/no-live-fleet-law.test.ts`](packages/web/src/recordings/no-live-fleet-law.test.ts))
 holds it to. If an auto-title isn't the name you'd give it, rename it there
-or run `rhizomorph label <sessionId> "<text>"` — either way it's written to
+or run `npm start --silent -- label <sessionId> "<text>"` — either way it's written to
 a sidecar file next to the log (`session-<id>.label.json`), never a
 mutation of the log itself, and a rename refreshes every picker showing
 that session, including the live dashboard's own. Once you've found the one
 you want, either replay it from the dashboard's own picker, or hand the
-file to someone else first with `rhizomorph export-record` (see [the record
+file to someone else first with `npm start --silent -- export-record` (see [the record
 format](docs/record-format.md)).
 
 ### The laboratory — opt-in, explicitly-invoked, and separate (prd12 ruling 1)
 
 Everything above runs the moment you start the server. The laboratory does
 not: it's a second actor, reachable only from your own command line —
-`rhizomorph lab checkpoint <lane>`, `rhizomorph lab fork <lane>
-[--at <checkpoint>] [--launch]`, `rhizomorph lab compare <forkId>` — never
+`npm start --silent -- lab checkpoint <lane>`, `npm start --silent -- lab fork <lane>
+[--at <checkpoint>] [--launch]`, `npm start --silent -- lab compare <forkId>` — never
 from a server route, a background poll, or a UI button. `checkpoint`
 snapshots a lane's live workspace and session position; `fork` restores as
 many arms of one checkpoint as you ask for, each into its own worktree, and
@@ -340,7 +340,7 @@ not a placeholder:
   worktree), which is why a fresh clone with nothing but `main` checked out
   reads as zero.
 - The **burn strip** shows `0` output tokens and the gap-voice line `NO COST
-  FEED (OTel) — dollars unavailable — run: eval "$(rhizomorph env <lane>)"`
+  FEED (OTel) — dollars unavailable — run: eval "$(npm start --silent -- env <lane>)"`
   in place of a dollar figure, plus `CONDUCTOR NOT INSTRUMENTED` in place of
   an overhead ratio.
 - The **scene**, the first thing under the two docked strips, shows a single
@@ -537,8 +537,8 @@ instruments beneath it.
   session dropdown and speed control (1x/4x/16x); live and replay share one
   reducer, so every panel above freezes to the scrubbed instant exactly as it
   would live. The dropdown names each session by its title — an operator
-  label if one was set (`rhizomorph label`), else the auto-title
-  `rhizomorph sessions` also shows — never a bare timestamp you'd have to
+  label if one was set (`npm start --silent -- label`), else the auto-title
+  `npm start --silent -- sessions` also shows — never a bare timestamp you'd have to
   decode.
 
   Underneath the transport sits **the dock** (prd13, cut to its final shape

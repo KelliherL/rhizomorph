@@ -29,7 +29,7 @@ next depends on which:
 
 - **A live lock** (fresh heartbeat, pid alive) — the new boot refuses to
   resume and starts a fresh session instead, both at the boot line and in
-  `rhizomorph doctor`:
+  `npm start --silent -- doctor`:
   > `session <id> is being written by a live instance (pid <pid>) —
   > starting a fresh session <newId> instead; use --fresh to silence, or
   > stop the other instance`
@@ -41,7 +41,7 @@ do if this fires when you didn't expect it to.
 
 ## Ending a session on purpose
 
-`rhizomorph rotate` (a thin HTTP client to the *running* instrument — never
+`npm start --silent -- rotate` (a thin HTTP client to the *running* instrument — never
 a second process touching the log file directly) asks it to close the
 current log and open the next one:
 
@@ -87,7 +87,7 @@ never a second copy with more in it):
 A redacted capture still replays exactly like the original — redaction never
 changes the shape of the transcript, only the identifying values in it.
 
-## `rhizomorph sessions` and `/recordings`
+## `npm start --silent -- sessions` and `/recordings`
 
 ```sh
 npm start -- sessions .
@@ -112,11 +112,11 @@ live fleet — a law its own source-grep test holds it to.
 
 - **Rename** — click the title, edit in place, save. Writes a sidecar file
   next to the log (`session-<id>.label.json`) — the append-only log itself
-  is never mutated. Equivalent CLI: `rhizomorph label <sessionId> "<text>"`.
+  is never mutated. Equivalent CLI: `npm start --silent -- label <sessionId> "<text>"`.
 - **Open in replay** — jumps straight into scrubbing that session; see
   [replay.md](replay.md).
 - **Export** — downloads the portable record (manifest + hash-chained log,
   captured transcripts included when the recording has them). Equivalent
-  CLI: `rhizomorph export-record [--session <id>] [--out <path>]` — see
+  CLI: `npm start --silent -- export-record [--session <id>] [--out <path>]` — see
   [`docs/record-format.md`](../record-format.md) for the file format, and
   note it refuses to write inside the watched repo.

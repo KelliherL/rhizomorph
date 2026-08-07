@@ -139,7 +139,7 @@ describe('StatusBar', () => {
     expect(lines).toHaveLength(1)
     expect(lines[0]).toHaveTextContent('WORKMUX COLLECTOR DISABLED')
     expect(lines[0]).toHaveTextContent('workmux not found on PATH')
-    expect(lines[0]).toHaveTextContent('rhizomorph doctor')
+    expect(lines[0]).toHaveTextContent('npm start --silent -- doctor')
   })
 
   it('does not speak the gap voice for a merely errored (not dead) collector', () => {

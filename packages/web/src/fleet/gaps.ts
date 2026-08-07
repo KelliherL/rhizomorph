@@ -20,7 +20,7 @@ export function buildGaps(
       'no-cost-feed',
       'NO COST FEED (OTel)',
       'dollars unavailable',
-      'eval "$(rhizomorph env <lane>)"',
+      'eval "$(npm start --silent -- env <lane>)"',
     )
   }
 
@@ -49,7 +49,7 @@ export function buildGaps(
       'unattributed-spend',
       `UNATTRIBUTED SPEND (${unattributed.length} lane${unattributed.length === 1 ? '' : 's'})`,
       'burn has no declared owner',
-      'eval "$(rhizomorph env <lane> --role worker)"',
+        'eval "$(npm start --silent -- env <lane> --role worker)"',
     )
   }
 
@@ -58,7 +58,7 @@ export function buildGaps(
       'conductor-not-instrumented',
       'CONDUCTOR NOT INSTRUMENTED',
       'orchestration overhead unknowable',
-      'rhizomorph --extra-sessions <dir>:conductor',
+      'npm start --silent -- --extra-sessions <dir>:conductor',
     )
   }
 
@@ -68,7 +68,7 @@ export function buildGaps(
       `collector-disabled:${collector.name}`,
       `${collector.name.toUpperCase()} COLLECTOR DISABLED`,
       collector.disabledReason ?? 'source unavailable',
-      'rhizomorph doctor',
+      'npm start --silent -- doctor',
     )
   }
 

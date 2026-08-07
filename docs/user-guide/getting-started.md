@@ -15,7 +15,7 @@ node --version
 ```
 
 `[Ran]` on this machine: `v22.23.2` — satisfies the floor. If yours is older,
-`rhizomorph doctor` (below) will tell you so and suggest `nvm install 22`
+`npm start --silent -- doctor` (below) will tell you so and suggest `nvm install 22`
 rather than failing silently later. An old Node is a `warn`, not a hard stop,
 but things may not run correctly below the floor — don't rely on that.
 
@@ -119,7 +119,7 @@ placeholder:
 - The **attention strip** reads `ALL CLEAR`, with an evidence line like
   `0 lanes · 0 branches · 0 files checked · collisions 0`.
 - The **burn strip** shows `0` output tokens and the gap line `NO COST FEED
-  (OTel) — dollars unavailable — run: eval "$(rhizomorph env <lane>)"` in
+  (OTel) — dollars unavailable — run: eval "$(npm start --silent -- env <lane>)"` in
   place of a dollar figure.
 - The **scene** shows a single lit mass (`main`) with nothing reaching out
   from it; the **fleet table** beneath it has no rows — nothing dispatched

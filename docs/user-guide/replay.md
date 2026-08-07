@@ -16,7 +16,7 @@ the recorded session with the most history — its exact label:
 
 (If no sessions are recorded yet, the same button reads **No recorded
 sessions yet** and is disabled.) Beside it: a session dropdown — named by an
-operator label if one was set, else the auto-title `rhizomorph sessions`
+operator label if one was set, else the auto-title from `npm start --silent -- sessions`
 also shows, never a bare timestamp — and a speed control with three exact
 steps: **1x**, **4x**, **16x**.
 
@@ -75,7 +75,7 @@ silently producing a conversation-less recording. See
   record file itself.
 - **Nothing auto-transmits.** No push, no server-to-server exchange, no
   background sync — a record only ever moves because you handed the file to
-  someone (`rhizomorph export-record`, see [`docs/record-format.md`](../record-format.md)).
+  someone (`npm start --silent -- export-record`, see [`docs/record-format.md`](../record-format.md)).
 - **Nothing beyond what was already redacted going in.** A record contains
   exactly what the log contains — whatever privacy allowlisting a collector
   applied before a line ever reached the log is what ships. See

@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Start here whenever something looks wrong: `rhizomorph doctor <path>` runs
+Start here whenever something looks wrong: `npm start --silent -- doctor <path>` runs
 every check below in one shot and prints the exact remedy for each. This
 page explains what the common lines actually mean.
 
@@ -55,7 +55,7 @@ The one thing that setup can't give you is **dollars**:
 and in the burn strip / fleet table:
 
 ```
-NO COST FEED (OTel) — dollars unavailable — run: eval "$(rhizomorph env <lane>)"
+NO COST FEED (OTel) — dollars unavailable — run: eval "$(npm start --silent -- env <lane>)"
 ```
 
 If you want authoritative or estimated dollars, run the printed command in
@@ -72,7 +72,7 @@ CONDUCTOR NOT INSTRUMENTED — overhead ratio unknowable
 ```
 
 — means no cost telemetry has ever arrived with `role: conductor`. Fix with
-`rhizomorph --extra-sessions <dir>:conductor` if your conductor's session
+`npm start --silent -- --extra-sessions <dir>:conductor` if your conductor's session
 logs live outside the worktrees this repo's collector already discovers.
 
 ## Stale session lock
@@ -96,7 +96,7 @@ This isn't an error — a new boot never splices into a log another process
 might still be writing. If you expected the old instance to be gone and this
 still fires, check for a leftover process (`ps aux | grep rhizomorph`) and
 stop it, or just accept the fresh session; nothing is lost, and the old one
-is still on disk (`rhizomorph sessions .` lists both).
+is still on disk (`npm start --silent -- sessions .` lists both).
 
 ## Why is my lane's conversation empty
 
@@ -109,7 +109,7 @@ pane:
   --extra-sessions <dir>:conductor`.
 - **`NO SESSION LOG for the conductor`** — the log has *telemetry* for the
   conductor, but no session id was ever attributed to it, so there's no file
-  to tail. Fix: `rhizomorph doctor` (it reuses the same attribution check
+  to tail. Fix: `npm start --silent -- doctor` (it reuses the same attribution check
   and will say precisely what's missing).
 - **`NO SESSION LOG for "<lane>"`** — same shape, for a worker lane: the log
   knows the lane exists, but no session id was attributed to it.
