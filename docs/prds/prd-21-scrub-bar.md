@@ -1,12 +1,18 @@
 # prd21 — the scrub bar moves smoothly, reads its position, and opens to the full record at a point
 
-> **Outcome:** proposed 2026-08-07 — not blessed, nothing landed. Two rulings drafted; the `buildFleet` scope question in "Open questions" is unresolved and this PRD must not be dispatched against until it is ruled.
+> **Outcome:** proposed 2026-08-07 — not blessed, nothing landed. Two rulings drafted. Both open questions that gated dispatch are now resolved (see "Open questions"); the work is filed as #269–#274, and ruling 1's core half is #267, which this PRD depends on.
 
 **Status:** PROPOSED — operator report 2026-08-07, evidence measured the same
-day. Sequenced after prd13 (the TIDE, whose dock this modifies) and beside
-prd18 (the complete-record UI, which is not yet a document in this tree).
-Numbered 21 at the operator's direction; prd18 is reserved by `docs/roadmap.md`
-for that UI round, and 19–20 are left unclaimed here rather than assumed.
+day. Sequenced after prd13 (the TIDE, whose dock this modifies). Numbered 21 at
+the operator's direction: prd18 is reserved by `docs/roadmap.md` for the
+complete-record UI, and prd19 (the connection) and prd20 (the concierge) are
+taken.
+
+**Filed as:** #269 (seek-path coalescing, ruling 1's web half) · #270 (the
+1000-notch step) · #271 (the 10 fps playback tick) · #272 (absolute time and
+the scattered scrub facts) · #273 (the loupe, ruling 2) · #274
+(`buildSessionIndex`'s load cost). **Depends on:** #267 (the incremental spend
+cursor, core-only fence).
 
 ## Problem
 
@@ -142,8 +148,27 @@ remedy #183 applied to the live path and the seek path skipped — removes the
 120-rebuilds-per-second waste. But it cannot rescue a single rebuild that
 already exceeds the frame budget on its own: 58 ms at 5,000 events, 292 ms at
 25,000, and 6.1 ms even on a four-lane session. So the spend selectors must
-*also* stop rescanning the whole telemetry history on every call — memoized
-per `(state, window)`, or incrementalised the way the fold already is.
+*also* stop rescanning the whole telemetry history on every call.
+
+**That half is not this PRD's to rule.** The operator ruled it standalone on
+2026-08-07 — the cost lands on the live path too, so it is a product-wide
+finding the scrubber merely exposed — and it is specified in **#267** (an
+incremental spend cursor in `packages/core/src/selectors/spend.ts`), on the
+precedent [ADR-0002](../adr/0002-one-reducer-for-live-and-replay.md) and #160's
+keyframed cure of the same disease one layer down. Per `AGENTS.md`, an
+architectural ruling is linked, not restated: **this PRD depends on #267 and
+does not duplicate it.**
+
+**Correction, carried from #267.** An earlier draft of this ruling offered
+"memoized per `(state, window)`" as an alternative to incrementalising. That is
+a dead end and is explicitly not taken: every seek folds a *fresh* state object
+(`useReplaySession.ts:178`), so a state-keyed cache misses 120×/s by
+construction — the exact case this PRD exists to fix. The incremental cursor is
+the load-bearing fix.
+
+What remains this PRD's own: the web-side half — coalescing the seek path and
+threading the cursor through `buildFleet` — whose fence is deliberately
+disjoint from #267's core-only one.
 
 The seek must still move the clock immediately: the thumb may never lag the
 finger, so the clock update and the fleet rebuild decouple. The fold stays
@@ -165,14 +190,12 @@ untouched.
 
 ## Open questions
 
-- **The `buildFleet` scope question — unresolved, and it gates dispatch.**
-  `buildFleet` costs 6.1 ms on a four-lane session and 292 ms at 25,000 events
-  **on the live path too**, not only while scrubbing: every panel and the scene
-  rebuild from it. That may be a larger finding than the scrub bar, which
-  merely exposes it. Does the selector work belong in this PRD, or as a
-  standalone performance issue this PRD depends on? Open, not ruled.
-- Is `buildSessionIndex`'s 4.4 s load cost at 55,000 events in scope here, or
-  its own finding?
+- ~~The `buildFleet` scope question.~~ **RESOLVED 2026-08-07, operator ruling:
+  standalone.** The cost lands on the live path too, so it is a product-wide
+  finding rather than a replay one, and it is specified in #267 (core-only
+  fence). This PRD depends on it; ruling 1 above carries the consequence.
+- ~~Is `buildSessionIndex`'s 4.4 s load cost in scope here?~~ **RESOLVED: its
+  own finding**, filed as #274.
 - What triggers the loupe — zooming past the cap, a click on the playhead, or
   a dedicated inspect affordance?
 - Payload sizes vary by orders of magnitude (a large diffstat against a token
